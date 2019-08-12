@@ -1,0 +1,34 @@
+[package]
+name = "ruspiro-cache"
+authors = ["Andre Borrmann <pspwizard@gmx.de>"]
+version = "0.1.0" # remember to update html_root_url
+description = "Raspberry Pi cache maintenance operation API"
+license = "Apache-2.0"
+repository = "https://github.com/RusPiRo/ruspiro-cache/tree/v0.1.0"
+documentation = "https://docs.rs/ruspiro-cache/0.1.0"
+readme = "README.md"
+keywords = ["RusPiRo", "baremetal", "raspberrypi", "cache"]
+categories = ["no-std", "embedded"]
+edition = "2018"
+
+[badges]
+travis-ci = { repository = "RusPiRo/ruspiro-cache", branch = "master" }
+maintenance = { status = "actively-developed" }
+
+[lib]
+
+[build-dependencies]
+cc = "1.0.38"
+
+[dependencies]
+
+[features]
+default = ["ruspiro_pi3"]
+ruspiro_pi3 = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = [
+    "-C target-cpu=cortex-a53",
+    "-C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon"
+    ]
