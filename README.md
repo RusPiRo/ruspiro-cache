@@ -14,7 +14,7 @@ to ensure access to the most recent values stores in the memory.
 To use the crate just add the following dependency to your ``Cargo.toml`` file:
 ```
 [dependencies]
-ruspiro-cache = "0.1.0"
+ruspiro-cache = "0.1.1"
 ```
 
 Once done the access to the cache maintenance functions is available like so:
