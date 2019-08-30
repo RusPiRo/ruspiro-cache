@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.1.2")]
 #![no_std]
 #![feature(asm)]
 
@@ -25,6 +25,11 @@
 //!     cache::cleaninvalidate(); // clean and invalidate the data cache
 //! }
 //! ```
+//! 
+//! # Features
+//! 
+//! - ``ruspiro_pi3`` is active by default and ensures the proper cache operations assembly is compiled
+//! 
 
 /// Perform a cache clean operation on the entire data cache
 pub fn clean() {

@@ -4,8 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-//! Build script to pre-compile the assembly files containing the majority of the boot up and initial configuration
-//! code
+//! Build script to pre-compile the assembly files containing the cache operations code
 //! 
 
 extern crate cc;
