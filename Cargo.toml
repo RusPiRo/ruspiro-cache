@@ -1,15 +1,16 @@
 [package]
 name = "ruspiro-cache"
 authors = ["Andre Borrmann <pspwizard@gmx.de>"]
-version = "0.1.2" # remember to update html_root_url
+version = "0.3.0" # remember to update html_root_url
 description = "Raspberry Pi cache maintenance operation API"
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-cache"
-documentation = "https://docs.rs/ruspiro-cache/0.1.2"
+documentation = "https://docs.rs/ruspiro-cache/0.3.0"
 readme = "README.md"
 keywords = ["RusPiRo", "baremetal", "raspberrypi", "cache"]
 categories = ["no-std", "embedded"]
 edition = "2018"
+links = "ruspiro-cache"
 
 [badges]
 travis-ci = { repository = "RusPiRo/ruspiro-cache", branch = "master" }

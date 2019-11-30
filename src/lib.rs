@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.1.2")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.3.0")]
 #![no_std]
 #![feature(asm)]
 
@@ -58,8 +58,29 @@ pub fn cleaninvalidate() {
     }
 }
 
+/// Flush the instruction cache in a given memory address range
+#[cfg(target_arch="aarch64")]
+pub fn flush_icache_range(from: u64, to: u64) {
+    unsafe {
+        __flush_icache_range(from, to);
+    };
+}
+
+/// Flush the data cache in a given memory address range
+#[cfg(target_arch="aarch64")]
+pub fn flush_dcache_range(from: u64, to: u64) {
+    unsafe {
+        __flush_dcache_range(from, to);
+    };
+}
+
 extern "C" {
     fn __clean_dcache();
     fn __invalidate_dcache();
     fn __cleaninvalidate_dcache();
+
+    #[cfg(target_arch="aarch64")]
+    fn __flush_icache_range(start: u64, end: u64);
+    #[cfg(target_arch="aarch64")]
+    fn __flush_dcache_range(start: u64, end: u64);
 }
