@@ -13,20 +13,10 @@
  **********************************************************************************************************************/
 
 .global __flush_icache_range
+.global __flush_dcache_range
 .global __invalidate_dcache
 .global __clean_dcache
 .global __cleaninvalidate_dcache
-
-.macro debug_lit_led num
-    sub sp, sp, #16
-    stp x0, x30, [sp, #0]
-    
-    mov x0, \num
-    bl lit_led
-
-    ldp x0, x30, [sp, #0]
-    add sp, sp, #16
-.endm
 
 .macro save_state
 	sub		sp, sp, #256 // make place at the stack to store all register values
@@ -97,50 +87,59 @@ __get_icache_line_size:
 	lsl     x0, x1, x0       // actual cache line size
 	ret
 
-/*************************************************************************
- * flushing instruction cache / data cache in the specified region
- * x0 - start address
- * x1 - end address
- * Curruptile registers x0-x6
- *************************************************************************/
-__flush_icache_range:
-__flush_dcache_range:
-	mov 	x6, x30	// secure ret address
-	mov     x2, x0	// start
-	mov     x3, x1  // end
-	bl      __get_dcache_line_size
-	sub     x4, x0, #1
-	bic     x4, x2, x4 // cache line size aligned start address
-//  first clean(invalidate data cache)
-1:
-	dc      civac, x4	// clean/invalidatze cache for VA to PoC
-	add		x4, x4, x0  // inc. address by cache line size
-	cmp     x4, x1      // until we reach the end address
-	b.lo    1b
-
-	dsb     ish
-// after data cache the instruction cache could be invalidated
-	bl      __get_icache_line_size
-	sub     x4, x0, #1
-	bic     x4, x3, x4	// cache line size aligned start address
-2:
-	ic      ivau, x4	// invalidate instruction cache
-	add     x4, x4, x0  // inc. address by cache line size
-	cmp     x4, x3
-	b.lo    2b
-
-	dsb     ish
-	isb
-
-	ret 	x6
-
 /**************************************************************************
  *
  * invalidate_dcache - invalidate the entire d-cache by set/way
  * 
  **************************************************************************/
 __invalidate_dcache:
-	bl		__cleaninvalidate_dcache
+	save_state
+
+	dsb	sy				// ensure ordering with previous memory accesses
+	mrs	x0, clidr_el1			// read clidr
+	and	x3, x0, #0x7000000		// extract loc from clidr
+	lsr	x3, x3, #23			// left align loc bit field
+	cbz	x3, ifinished			// if loc is 0, then no need to clean
+	mov	x10, #0				// start clean at cache level 0
+iloop1:
+	add	x2, x10, x10, lsr #1		// work out 3x current cache level
+	lsr	x1, x0, x2			// extract cache type bits from clidr
+	and	x1, x1, #7			// mask of the bits for current cache only
+	cmp	x1, #2				// see what cache we have at this level
+	b.lt	iskip				// skip if no cache, or just i-cache
+	msr	csselr_el1, x10			// select current cache level in csselr
+	isb					// isb to sych the new cssr&csidr
+	mrs	x1, ccsidr_el1			// read the new ccsidr
+	and	x2, x1, #7			// extract the length of the cache lines
+	add	x2, x2, #4			// add 4 (line length offset)
+	mov	x4, #0x3ff
+	and	x4, x4, x1, lsr #3		// find maximum number on the way size
+	clz	w5, w4				// find bit position of way size increment
+	mov	x7, #0x7fff
+	and	x7, x7, x1, lsr #13		// extract max number of the index size
+iloop2:
+	mov	x9, x4				// create working copy of max way size
+iloop3:
+	lsl	x6, x9, x5
+	orr	x11, x10, x6			// factor way and cache number into x11
+	lsl	x6, x7, x2
+	orr	x11, x11, x6			// factor index number into x11
+	dc	isw, x11			// invalidate by set/way
+	subs	x9, x9, #1			// decrement the way
+	b.ge	iloop3
+	subs	x7, x7, #1			// decrement the index
+	b.ge	iloop2
+iskip:
+	add	x10, x10, #2			// increment cache number
+	cmp	x3, x10
+	b.gt	iloop1
+ifinished:
+	mov	x10, #0				// swith back to cache level 0
+	msr	csselr_el1, x10			// select current cache level in csselr
+	dsb	sy
+	isb
+
+	restore_state
 	ret
 
 /*
@@ -155,20 +154,64 @@ __invalidate_dcache:
  */
 
 __clean_dcache:
-	bl		__cleaninvalidate_dcache
+	save_state
+
+	dsb	sy				// ensure ordering with previous memory accesses
+	mrs	x0, clidr_el1			// read clidr
+	and	x3, x0, #0x7000000		// extract loc from clidr
+	lsr	x3, x3, #23			// left align loc bit field
+	cbz	x3, cfinished			// if loc is 0, then no need to clean
+	mov	x10, #0				// start clean at cache level 0
+cloop1:
+	add	x2, x10, x10, lsr #1		// work out 3x current cache level
+	lsr	x1, x0, x2			// extract cache type bits from clidr
+	and	x1, x1, #7			// mask of the bits for current cache only
+	cmp	x1, #2				// see what cache we have at this level
+	b.lt	cskip				// skip if no cache, or just i-cache
+	msr	csselr_el1, x10			// select current cache level in csselr
+	isb					// isb to sych the new cssr&csidr
+	mrs	x1, ccsidr_el1			// read the new ccsidr
+	and	x2, x1, #7			// extract the length of the cache lines
+	add	x2, x2, #4			// add 4 (line length offset)
+	mov	x4, #0x3ff
+	and	x4, x4, x1, lsr #3		// find maximum number on the way size
+	clz	w5, w4				// find bit position of way size increment
+	mov	x7, #0x7fff
+	and	x7, x7, x1, lsr #13		// extract max number of the index size
+cloop2:
+	mov	x9, x4				// create working copy of max way size
+cloop3:
+	lsl	x6, x9, x5
+	orr	x11, x10, x6			// factor way and cache number into x11
+	lsl	x6, x7, x2
+	orr	x11, x11, x6			// factor index number into x11
+	dc	csw, x11			// clean by set/way
+	subs	x9, x9, #1			// decrement the way
+	b.ge	cloop3
+	subs	x7, x7, #1			// decrement the index
+	b.ge	cloop2
+cskip:
+	add	x10, x10, #2			// increment cache number
+	cmp	x3, x10
+	b.gt	cloop1
+cfinished:
+	mov	x10, #0				// swith back to cache level 0
+	msr	csselr_el1, x10			// select current cache level in csselr
+	dsb	sy
+	isb
+
+	restore_state
 	ret
 
-/*
- *************************************************************************
+/**************************************************************************
  *
- * cleaninvalidate_dcache - clen & invalidate the entire d-cache by set/way
+ * cleaninvalidate_dcache - clean & invalidate the entire d-cache by set/way
  *
  * Note: for Cortex-A53, there is no cp instruction for invalidating
  * the whole D-cache. Need to invalidate each line.
  *
-  *
- *************************************************************************
- */
+ *
+ **************************************************************************/
 
 __cleaninvalidate_dcache:
 	save_state
@@ -218,6 +261,4 @@ finished:
 	isb
 
 	restore_state
-
-	//debug_lit_led #20
 	ret

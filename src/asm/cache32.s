@@ -74,6 +74,8 @@ __invalidate_dcache:
 	dsb
 	isb
 
+	dmb
+
 	pop {r0-r12, pc}
 
 
@@ -134,6 +136,8 @@ __clean_dcache:
 	mcr	p15, 2, r10, c0, c0, 0		/* select current cache level in cssr */
 	dsb
 	isb
+
+	dmb
 
 	pop {r0-r12, pc}
 
@@ -198,4 +202,6 @@ __cleaninvalidate_dcache:
 	dsb
 	isb
 
+	dmb
+	
 	pop {r0-r12, pc}

@@ -1,11 +1,11 @@
-/*********************************************************************************************************************** 
+/***********************************************************************************************************************
  * Copyright (c) 2019 by the authors
- * 
- * Author: André Borrmann 
+ *
+ * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
 //! Build script to pre-compile the assembly files containing the cache operations code
-//! 
+//!
 
 extern crate cc;
 use std::env;
@@ -28,7 +28,7 @@ fn main() {
                     .flag("-march=armv8-a")
                     .compile("cache");
             }
-        },
-        _ => ()
+        }
+        _ => (),
     }
 }
