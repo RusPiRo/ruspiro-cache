@@ -74,8 +74,9 @@ __invalidate_dcache:
 	dsb
 	isb
 
-	pop {r0-r12, lr}
-	bx	lr
+	dmb
+
+	pop {r0-r12, pc}
 
 
 /*
@@ -136,8 +137,9 @@ __clean_dcache:
 	dsb
 	isb
 
-	pop {r0-r12, lr}
-	bx	lr
+	dmb
+
+	pop {r0-r12, pc}
 
 /*
  *************************************************************************
@@ -200,5 +202,6 @@ __cleaninvalidate_dcache:
 	dsb
 	isb
 
-	pop {r0-r12, lr}
-	bx	lr
+	dmb
+	
+	pop {r0-r12, pc}
