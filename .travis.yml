@@ -35,7 +35,7 @@ matrix:
         - rustup component add llvm-tools-preview
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo make --profile a32 pi3
+      script: cargo make --profile a32-travis pi3
 
     - name: "unit tests"
       install:

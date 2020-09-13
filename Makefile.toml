@@ -26,6 +26,14 @@ CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune
 RUSTFLAGS = "-C linker=${CC} -C target-cpu=cortex-a53 -C link-arg=-nostartfiles"
 BUILD_TARGET = "aarch64-unknown-linux-gnu"
 
+[env.a32-travis]
+CC = "arm-eabi-gcc"
+AR = "arm-eabi-ar"
+OC = "arm-eabi-objcopy"
+CFLAGS = "-mcpu=cortex-a53 -march=armv7-a -mfpu=neon -mfloat-abi=softfp -Wall -O3 -nostdlib -nostartfiles"
+RUSTFLAGS = "-C linker=${CC} -C target-cpu=cortex-a53 -C link-arg=-nostartfiles"
+BUILD_TARGET = "armv7a-none-eabi"
+
 [tasks.xbuild]
 command = "cargo"
 args = ["xbuild", "--target", "${BUILD_TARGET}", "--release", "--features", "${FEATURES}"]
