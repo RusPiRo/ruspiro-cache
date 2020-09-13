@@ -4,9 +4,8 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.3.0")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.3.1")]
 #![no_std]
-#![feature(asm)]
 
 //! # Raspberry Pi cache maintenance
 //!
