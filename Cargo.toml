@@ -32,4 +32,4 @@ ruspiro_pi3 = [
  ]
 
 [patch.crates-io]
-ruspiro-arch-aarch64 = { path = "../ruspiro-arch-aarch64" }
+ruspiro-arch-aarch64 = { git = "https://github.com/RusPiRo/ruspiro-arch-aarch64.git", branch = "master" }
