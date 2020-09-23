@@ -1,17 +1,19 @@
 /***********************************************************************************************************************
- * Copyright (c) 2019 by the authors
+ * Copyright (c) 2020 by the authors
  *
- * Author: André Borrmann
- * License: Apache License 2.0
+ * Author: André Borrmann <pspwizard@gmx.de>
+ * License: Apache License 2.0 / MIT
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-cache/0.3.1")]
-#![no_std]
+#![doc(html_root_url = "https://docs.rs/ruspiro-cache/||VERSION||")]
+#![cfg_attr(not(any(test, doctest)), no_std)]
+#![feature(llvm_asm, core_intrinsics)]
+// this crate does only compile to something usefull if targeted on Aarch64
+#![cfg(target_arch = "aarch64")]
 
-//! # Raspberry Pi cache maintenance
+//! # Cache Maintenance Operations
 //!
-//! If the caches are active on the Raspberry Pi than there might be specific cache
-//! operations needed to clean and invalidate the cache to ensure in cross core and/or
-//! ARM core to GPU communications the most recent data is seen.
+//! If the caches are active on the Raspberry Pi than there might be specific cache operations needed to clean and
+//! invalidate the cache to ensure in cross core and/or ARM core to GPU communications the most recent data is seen.
 //!
 //! # Usage
 //!
@@ -25,23 +27,20 @@
 //! }
 //! ```
 
+mod dcache;
+pub use dcache::*;
+
 /// Perform a cache clean operation on the entire data cache
 pub fn clean() {
-    unsafe { __clean_dcache() }
+    unsafe { dcache::clean_dcache() }
 }
 
 /// Perform a cache invalidate operation on the entire data cache
 pub fn invalidate() {
-    unsafe { __invalidate_dcache() }
+    unsafe { dcache::invalidate_dcache() }
 }
 
 /// Perform a cache clean and invalidate operation on the entire data cache
-pub fn cleaninvalidate() {
-    unsafe { __cleaninvalidate_dcache() }
-}
-
-extern "C" {
-    fn __clean_dcache();
-    fn __invalidate_dcache();
-    fn __cleaninvalidate_dcache();
+pub fn flush() {
+    unsafe { dcache::flush_dcache() }
 }

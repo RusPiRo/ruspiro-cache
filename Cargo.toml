@@ -1,27 +1,35 @@
 [package]
 name = "ruspiro-cache"
 authors = ["Andre Borrmann <pspwizard@gmx.de>"]
-version = "0.3.1" # remember to update html_root_url
+version = "0.4.0" # remember to update html_root_url
 description = "Raspberry Pi cache maintenance operation API"
 license = "Apache-2.0"
-repository = "https://github.com/RusPiRo/ruspiro-cache/tree/v0.3.1"
-documentation = "https://docs.rs/ruspiro-cache/0.3.1"
+repository = "https://github.com/RusPiRo/ruspiro-cache/tree/v||VERSION||"
+documentation = "https://docs.rs/ruspiro-cache/||VERSION||"
 readme = "README.md"
 keywords = ["RusPiRo", "baremetal", "raspberrypi", "cache"]
 categories = ["no-std", "embedded"]
 edition = "2018"
-links = "ruspiro-cache"
+links = "ruspiro_cache"
 exclude = [".travis.yml", "Makefile.toml"]
 
 [badges]
-travis-ci = { repository = "RusPiRo/ruspiro-cache", branch = "master" }
+travis-ci = { repository = "RusPiRo/ruspiro-cache", branch = "release" }
 maintenance = { status = "actively-developed" }
+is-it-maintained-open-issues = { repository = "RusPiRo/ruspiro-cache" }
 
 [lib]
 
 [build-dependencies]
-cc = "1.0.38"
+cc = "1.0.60"
 
 [dependencies]
+ruspiro-arch-aarch64 = "0.1.3"
 
 [features]
+ruspiro_pi3 = [
+    "ruspiro-arch-aarch64/ruspiro_pi3"
+ ]
+
+[patch.crates-io]
+ruspiro-arch-aarch64 = { git = "https://github.com/RusPiRo/ruspiro-arch-aarch64.git", branch = "master" }
