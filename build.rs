@@ -7,5 +7,4 @@
 //! Build script required as we use the `links` attribute in `Cargo-toml`
 //!
 
-fn main() {
-}
+fn main() {}

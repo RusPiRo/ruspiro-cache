@@ -7,12 +7,13 @@
 #![doc(html_root_url = "https://docs.rs/ruspiro-cache/||VERSION||")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(llvm_asm, core_intrinsics)]
+// this crate does only compile to something usefull if targeted on Aarch64
+#![cfg(target_arch = "aarch64")]
 
-//! # Raspberry Pi cache maintenance
+//! # Cache Maintenance Operations
 //!
-//! If the caches are active on the Raspberry Pi than there might be specific cache
-//! operations needed to clean and invalidate the cache to ensure in cross core and/or
-//! ARM core to GPU communications the most recent data is seen.
+//! If the caches are active on the Raspberry Pi than there might be specific cache operations needed to clean and
+//! invalidate the cache to ensure in cross core and/or ARM core to GPU communications the most recent data is seen.
 //!
 //! # Usage
 //!

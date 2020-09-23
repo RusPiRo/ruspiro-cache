@@ -9,10 +9,7 @@
 //!
 
 use ruspiro_arch_aarch64::register::{
-    el0::ctr_el0,
-    el1::clidr_el1,
-    el1::csselr_el1,
-    el1::ccsidr_el1,
+    el0::ctr_el0, el1::ccsidr_el1, el1::clidr_el1, el1::csselr_el1,
 };
 
 use ruspiro_arch_aarch64::instructions::{dsb, isb};
@@ -34,7 +31,7 @@ enum CacheLevel {
 
 pub unsafe fn invalidate_dcache() {
     dsb();
-    
+
     // get level of coherency
     let loc = clidr_el1::read(clidr_el1::LOC::Field);
     if loc.value() != 0 {
@@ -50,7 +47,7 @@ pub unsafe fn invalidate_dcache() {
 
 pub unsafe fn clean_dcache() {
     dsb();
-    
+
     // get level of coherency
     let loc = clidr_el1::read(clidr_el1::LOC::Field);
     if loc.value() != 0 {
@@ -66,7 +63,7 @@ pub unsafe fn clean_dcache() {
 
 pub unsafe fn flush_dcache() {
     dsb();
-    
+
     // get level of coherency
     let loc = clidr_el1::read(clidr_el1::LOC::Field);
     if loc.value() != 0 {
@@ -92,11 +89,11 @@ unsafe fn maintain_dcache(operation: CacheOperation, level: CacheLevel) {
     if cache_type >= 0x2 {
         // select the cache level for the cache operations
         match level {
-            CacheLevel::L1 =>csselr_el1::write(csselr_el1::LEVEL::L1),
-            CacheLevel::L2 =>csselr_el1::write(csselr_el1::LEVEL::L2),
-            CacheLevel::L3 =>csselr_el1::write(csselr_el1::LEVEL::L3),
+            CacheLevel::L1 => csselr_el1::write(csselr_el1::LEVEL::L1),
+            CacheLevel::L2 => csselr_el1::write(csselr_el1::LEVEL::L2),
+            CacheLevel::L3 => csselr_el1::write(csselr_el1::LEVEL::L3),
         }
-        // instruction barrier to ensure the cache level has been choosen be the 
+        // instruction barrier to ensure the cache level has been choosen be the
         // previous instruction
         isb();
         let cache_line_size = ccsidr_el1::read(ccsidr_el1::LINESIZE::Field).value();
@@ -116,7 +113,7 @@ unsafe fn maintain_dcache(operation: CacheOperation, level: CacheLevel) {
                     CacheOperation::Invalidate => llvm_asm!("dc isw, $0"::"r"(x11)::"volatile"),
                     CacheOperation::Clean => llvm_asm!("dc csw, $0"::"r"(x11)::"volatile"),
                     CacheOperation::Flush => llvm_asm!("dc cisw, $0"::"r"(x11)::"volatile"),
-                } 
+                }
             }
         }
     }
