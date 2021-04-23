@@ -32,15 +32,15 @@ pub use dcache::*;
 
 /// Perform a cache clean operation on the entire data cache
 pub fn clean() {
-    unsafe { dcache::clean_dcache() }
+  unsafe { dcache::clean_dcache() }
 }
 
 /// Perform a cache invalidate operation on the entire data cache
 pub fn invalidate() {
-    unsafe { dcache::invalidate_dcache() }
+  unsafe { dcache::invalidate_dcache() }
 }
 
 /// Perform a cache clean and invalidate operation on the entire data cache
 pub fn flush() {
-    unsafe { dcache::flush_dcache() }
+  unsafe { dcache::flush_dcache() }
 }

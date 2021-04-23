@@ -4,7 +4,7 @@ This crates provides several cach maintenance functions that helps clearing or i
 Especially when it comes to cross core and core to GPU communications (like mailbox calls) the cache need to be cleared/invalidated
 to ensure access to the most recent values stores in the memory.
 
-[![Travis-CI Status](https://api.travis-ci.com/RusPiRo/ruspiro-cache.svg?branch=release)](https://travis-ci.com/RusPiRo/ruspiro-cache)
+![CI](https://github.com/RusPiRo/ruspiro-cache/workflows/CI/badge.svg?branch=development)
 [![Latest Version](https://img.shields.io/crates/v/ruspiro-cache.svg)](https://crates.io/crates/ruspiro-cache)
 [![Documentation](https://docs.rs/ruspiro-cache/badge.svg)](https://docs.rs/ruspiro-cache)
 [![License](https://img.shields.io/crates/l/ruspiro-cache.svg)](https://github.com/RusPiRo/ruspiro-cache#license)
