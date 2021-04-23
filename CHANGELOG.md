@@ -1,5 +1,9 @@
 # Changelog
 
+## :peach: v0.4.1
+
+This is mainly a maintenance version migrating the build pipeline to GitHub Actions.
+
 ## :peach: v0.4.0
 
 This version removes the aarch32 support from the crate and introduces the use of a better pipeline config to build and publish this crate.
